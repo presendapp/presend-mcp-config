@@ -29,7 +29,7 @@ Once connected, ask your AI assistant: *"What tools do you have from Presend?"* 
 
 ## What is Presend?
 
-A free 40-endpoint security/utility API and MCP server, no signup, no API key. [presend.pages.dev](https://presend.pages.dev) · [Main repo](https://github.com/presendapp/presend)
+A free security/utility API and MCP server, no signup, no API key. [presend.pages.dev](https://presend.pages.dev) · [Main repo](https://github.com/presendapp/presend-source)
 
 ## License
 
