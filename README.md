@@ -27,6 +27,10 @@ Until you've confirmed your specific Claude Desktop version handles this correct
 
 Once connected, ask your AI assistant: *"What tools do you have from Presend?"* -- it should list tools like `whois_lookup`, `vulnerability_check`, `maintainer_change_check`. Then try: *"Use Presend to check if the npm package lodash has a suspicious maintainer change."*
 
+## For teams
+
+We are testing a paid offer for teams: the same dependency checks on every pull request that changes a dependency and for AI coding agents before they install a package, with false-positive rates measured and published. Nothing is for sale yet. If your team would use it, [join the waitlist](https://presend.pages.dev/teams).
+
 ## What is Presend?
 
 A free security/utility API and MCP server, no signup, no API key. [presend.pages.dev](https://presend.pages.dev) · [Main repo](https://github.com/presendapp/presend-source)
