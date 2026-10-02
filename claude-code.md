@@ -40,6 +40,8 @@ The MCP tool `supply_chain_check` only helps when the agent decides to call it. 
 | No signal | nothing: the normal permission flow applies |
 | Presend unreachable, or a check could not run | nothing by default; set `PRESEND_HOOK_FAIL_CLOSED=1` to be asked instead |
 
+To block instead of asking, set `PRESEND_HOOK_STRICT=1`. The same script also works as a Cursor hook: see [cursor.md](cursor.md#check-packages-before-cursors-agent-installs-them).
+
 **Setup.** Copy the script to `.claude/hooks/presend_preinstall.py` in your project, then add this to `.claude/settings.json`:
 
 ```json

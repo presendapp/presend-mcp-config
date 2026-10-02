@@ -35,9 +35,9 @@ We are testing a paid offer for teams: the same dependency checks on every pull 
 
 A free security/utility API and MCP server, no signup, no API key. [presend.pages.dev](https://presend.pages.dev) · [Main repo](https://github.com/presendapp/presend-source)
 
-## Claude Code: check packages before the agent installs them
+## Claude Code and Cursor: check packages before the agent installs them
 
-A PreToolUse hook blocks `npm install` / `pip install` of a name that does not exist on the registry and asks you to confirm a package that is new, close to a popular name or vulnerable: see [claude-code.md](claude-code.md#check-packages-before-claude-code-installs-them).
+A hook blocks `npm install` / `pip install` of a name that does not exist on the registry and asks you to confirm a package that is new, close to a popular name or vulnerable: see [claude-code.md](claude-code.md#check-packages-before-claude-code-installs-them) and [cursor.md](cursor.md#check-packages-before-cursors-agent-installs-them) (Cursor reliably enforces only the block).
 
 ## License
 

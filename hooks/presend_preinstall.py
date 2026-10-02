@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Presend pre-install check for Claude Code (PreToolUse hook on the Bash tool).
+"""Presend pre-install check for Claude Code (PreToolUse on Bash) and Cursor (beforeShellExecution).
 
 Before Claude Code runs `npm install <pkg>`, `pip install <pkg>` and similar commands, this hook asks
 Presend's supply-chain check about each named package:
@@ -9,7 +9,7 @@ Presend's supply-chain check about each named package:
 - otherwise the hook stays silent and the normal permission flow applies.
 
 Only package names (and an exact version when one is given) are sent to presend.pages.dev, never your code.
-If Presend cannot be reached, the install goes ahead; set PRESEND_HOOK_FAIL_CLOSED=1 to be asked instead.
+If Presend cannot be reached, the install goes ahead; set PRESEND_HOOK_FAIL_CLOSED=1 to be asked instead,\nand PRESEND_HOOK_STRICT=1 to block (deny) instead of asking. Works with Claude Code (PreToolUse) and Cursor\n(beforeShellExecution; Cursor reliably enforces only deny).
 Free API, per-minute rate limits apply. Not a malware scanner. Python 3.8+, standard library only. MIT.
 """
 import json, os, re, shlex, sys, urllib.parse, urllib.request
@@ -110,14 +110,12 @@ def reasons(d):
     if "repo_archived" in flags: out.append("source repository is archived")
     return out
 
-def main():
-    try:
-        event = json.load(sys.stdin)
-    except Exception:
-        return 0
-    if event.get("tool_name") != "Bash": return 0
-    pkgs = extract((event.get("tool_input") or {}).get("command"))
-    if not pkgs: return 0
+CURSOR = False
+
+def decide(command):
+    """("deny" | "ask" | None, reasons) for one shell command."""
+    pkgs = extract(command)
+    if not pkgs: return None, []
     deny, ask, unchecked = [], [], [n for _, n, _ in pkgs[MAX_PACKAGES:]]
     for eco, name, ver in pkgs[:MAX_PACKAGES]:
         d = check(eco, name, ver)
@@ -134,14 +132,40 @@ def main():
     elif ask or (unchecked and os.environ.get("PRESEND_HOOK_FAIL_CLOSED") == "1"):
         decision, lines = "ask", ask
     else:
-        return 0
+        return None, []
     if unchecked: lines = lines + ["not checked: " + ", ".join(unchecked)]
-    print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": decision,
-                                             "permissionDecisionReason": "Presend pre-install check: " + " | ".join(lines)}}))
+    if decision == "ask" and os.environ.get("PRESEND_HOOK_STRICT") == "1": decision = "deny"
+    return decision, lines
+
+def main():
+    global CURSOR
+    try:
+        event = json.load(sys.stdin)
+    except Exception:
+        event = {}
+    # Cursor (beforeShellExecution): {"command": ...}; Claude Code (PreToolUse): {"tool_name": "Bash", "tool_input": {"command": ...}}
+    CURSOR = event.get("hook_event_name") == "beforeShellExecution" or ("command" in event and "tool_name" not in event)
+    if CURSOR:
+        command = event.get("command")
+    elif event.get("tool_name") == "Bash":
+        command = (event.get("tool_input") or {}).get("command")
+    else:
+        command = None
+    decision, lines = decide(command) if command else (None, [])
+    reason = ("Presend pre-install check: " + " | ".join(lines)) if lines else ""
+    if CURSOR:
+        # Cursor: "allow" never auto-approves a command (its own approval still applies); only "deny" is reliably enforced.
+        out = {"permission": decision or "allow"}
+        if reason: out.update({"user_message": reason, "agent_message": reason})
+        print(json.dumps(out))
+    elif decision:
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": decision,
+                                                 "permissionDecisionReason": reason}}))
     return 0
 
 if __name__ == "__main__":
     try:
         sys.exit(main())
     except Exception:
+        if CURSOR: print('{"permission": "allow"}')
         sys.exit(0)
