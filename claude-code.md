@@ -8,6 +8,12 @@ Claude Code's CLI supports remote Streamable HTTP servers natively -- no bridge 
 claude mcp add --transport http presend https://presend.pages.dev/mcp
 ```
 
+To expose only the five dependency-check tools:
+
+```bash
+claude mcp add --transport http presend-deps https://presend.pages.dev/mcp-deps
+```
+
 ## Or edit the config file directly
 
 `.mcp.json` (project-level) or `~/.claude.json` (user-level):

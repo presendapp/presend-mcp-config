@@ -2,6 +2,8 @@
 
 Presend's MCP server (`https://presend.pages.dev/mcp`, Streamable HTTP, no signup, no API key) works with any MCP-compatible client. This repo has exact, per-client setup instructions.
 
+**Only want the dependency checks?** Use `https://presend.pages.dev/mcp-deps` instead: the same server limited to the five tools an agent needs before installing an npm or PyPI package (`supply_chain_check`, `typosquat_check`, `maintainer_change_check`, `vulnerability_check`, `repo_health_check`). Fewer tools make it easier for the model to pick the right one. Replace the URL in any example below.
+
 **If you write code**, see [presend-examples](https://github.com/presendapp/presend-examples) instead -- runnable Python for LangChain, CrewAI, LlamaIndex, OpenAI Agents SDK, and Google ADK.
 
 **If you use an app** (Claude Desktop, Cursor, Windsurf, VS Code), this repo is for you.
