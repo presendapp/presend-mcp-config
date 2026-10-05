@@ -14,16 +14,34 @@ MCP config field names (`url` vs `serverUrl`, `type` vs `transport`) genuinely d
 
 | Client | Guide | Method |
 |---|---|---|
-| Claude Desktop | [claude-desktop.md](claude-desktop.md) | ⚠️ Bridge required, see below |
+| Claude (claude.ai, Desktop, mobile) | [claude-desktop.md](claude-desktop.md) | Settings → Connectors (paid plans) |
 | Claude Code (CLI) | [claude-code.md](claude-code.md) | One command |
 | Cursor | [cursor.md](cursor.md) | Settings UI or JSON |
 | Windsurf | [windsurf.md](windsurf.md) | Settings UI or JSON |
 
-## ⚠️ Claude Desktop: known bug, read before configuring
+## Claude (claude.ai, Desktop, mobile): add it as a connector
+
+On Pro, Max, Team and Enterprise plans, Claude adds remote MCP servers from **Settings → Connectors → Add custom connector** ([Anthropic's guide](https://support.claude.com/en/articles/11503834-building-custom-connectors-via-remote-mcp-servers)). No bridge and no config file.
+
+1. Name: `Presend package checks`. URL: `https://presend.pages.dev/mcp-deps`.
+2. Authentication: **No connection** (open server, no account, no API key).
+3. Claude lists the five tools as read-only.
+
+Then try:
+
+- *"Before I run npm install expres, check that package."* `expres` is flagged as a near-miss of `express`.
+- *"Is the PyPI package reqeusts safe to install?"* The name does not exist on PyPI.
+- *"Check lodash 4.17.15 on npm for known vulnerabilities."* 6 OSV.dev advisories, with the fixed versions.
+
+Tested on 5 October 2026 in Claude (Pro plan) with `/mcp-deps`.
+
+Limits: Presend is not a malware scanner; the typosquat check compares names against a list of popular packages; a clean result does not prove a package is safe; per-minute rate limits apply. Data: the tools receive only the package names, versions and repository names you ask about, which Presend passes to npm, PyPI, OSV.dev and GitHub ([privacy policy](https://presend.pages.dev/privacy)).
+
+## ⚠️ Claude Desktop config file: known bug
 
 As of writing, some Claude Desktop versions have a **data-loss bug**: adding a remote MCP server directly via a `url` field in `claude_desktop_config.json` can silently wipe your *entire* existing `mcpServers` section (and some other settings) on the next app restart, with no error shown. This is reported behavior, not something we've been able to independently verify by running the app ourselves.
 
-Until you've confirmed your specific Claude Desktop version handles this correctly, use the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge instead -- see [claude-desktop.md](claude-desktop.md) for the exact config. It's one extra line and avoids the risk entirely.
+This only concerns editing that file by hand. On paid plans, add Presend from Settings → Connectors instead (section above). If you do edit the file, use the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge: see [claude-desktop.md](claude-desktop.md) for the exact config. It's one extra line and avoids the risk.
 
 ## Verify it worked
 
