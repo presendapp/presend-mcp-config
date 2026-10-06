@@ -23,6 +23,8 @@ MCP config field names (`url` vs `serverUrl`, `type` vs `transport`) genuinely d
 
 On Pro, Max, Team and Enterprise plans, Claude adds remote MCP servers from **Settings → Connectors → Add custom connector** ([Anthropic's guide](https://support.claude.com/en/articles/11503834-building-custom-connectors-via-remote-mcp-servers)). No bridge and no config file.
 
+It is also listed in Claude's connector directory as a Community connector: [Presend package checks](https://claude.ai/directory/connectors/presend-package-checks).
+
 1. Name: `Presend package checks`. URL: `https://presend.pages.dev/mcp-deps`.
 2. Authentication: **No connection** (open server, no account, no API key).
 3. Claude lists the five tools as read-only.
